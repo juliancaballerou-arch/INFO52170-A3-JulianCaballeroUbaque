@@ -1,0 +1,43 @@
+name: Python CI Workflow A3
+
+# Defines the event that triggers the workflow.
+# This workflow runs every time code is pushed to the repository.
+on:
+  push:
+  #Manually run from Github actions
+  workflow_dispatch:
+
+# Defines the jobs that will be executed.
+jobs:
+  # Job responsible for preparing the environment and running the Python application.
+  run-app:
+    # Specifies the virtual machine used to execute the job.
+    # ubuntu-latest provides a clean Linux environment.
+    runs-on: ubuntu-latest
+    # Sequence of tasks executed within the job.
+    steps:
+        # Downloads the repository's source code into the runner
+        # so the workflow can access project files.
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        # Installs and configures the required Python version.
+        # This ensures the application runs using Python 3.11.
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+        # Installs project dependencies.
+        # 1. Upgrades pip to the latest version.
+        # 2. Checks whether a requirements.txt file exists.
+        # 3. If the file exists, installs all listed packages.
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then
+            pip install -r requirements.txt
+          fi
+        # Executes the main Python application.
+        # The workflow will fail if app.py exits with an error.
+      - name: Run app.py
+        run: python app.py
